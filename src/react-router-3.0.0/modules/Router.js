@@ -92,7 +92,7 @@ const Router = React.createClass({
   componentWillMount() {
     this.transitionManager = this.createTransitionManager()
     this.router = this.createRouterObject(this.state)
-
+    debugger
     this._unlisten = this.transitionManager.listen((error, state) => {
       if (error) {
         this.handleError(error)
@@ -127,7 +127,7 @@ const Router = React.createClass({
   render() {
     const { location, routes, params, components } = this.state
     const { createElement, render, ...props } = this.props
-
+    console.log('render', render)
     if (location == null)
       return null // Async match
 
@@ -147,5 +147,5 @@ const Router = React.createClass({
   }
 
 })
-
+console.log("Router", Router)
 export default Router

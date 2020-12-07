@@ -4,6 +4,7 @@ const rootDir = path.resolve(__dirname, '.');
 
 module.exports = {
   entry: './index.js',
+  devtool: 'source-map',
   resolve: {
     alias: {
         'react-router': path.resolve(rootDir, 'src/react-router-3.0.0'),
