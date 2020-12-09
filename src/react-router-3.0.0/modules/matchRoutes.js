@@ -107,9 +107,9 @@ function createParams(paramNames, paramValues) {
 function matchRouteDeep(
   route, location, remainingPathname, paramNames, paramValues, callback
 ) {
-  let pattern = route.path || ''
+  let pattern = route.path || '' // 路由组件对应的路径
 
-  if (pattern.charAt(0) === '/') {
+  if (pattern.charAt(0) === '/') { // 如果路由组件的路径是由/开头，那么remainingPathname就赋值当前地址
     remainingPathname = location.pathname
     paramNames = []
     paramValues = []
@@ -219,10 +219,12 @@ export default function matchRoutes(
   routes, location, callback,
   remainingPathname, paramNames=[], paramValues=[]
 ) {
+  // 如果remainingPathname没有值，就把当前整条路径赋值给它
   if (remainingPathname === undefined) {
     // TODO: This is a little bit ugly, but it works around a quirk in history
     // that strips the leading slash from pathnames when using basenames with
     // trailing slashes.
+    // 保证/是开头字符
     if (location.pathname.charAt(0) !== '/') {
       location = {
         ...location,

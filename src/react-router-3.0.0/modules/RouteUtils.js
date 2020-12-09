@@ -51,6 +51,7 @@ export function createRoutesFromReactChildren(children, parentRoute) {
   React.Children.forEach(children, function (element) {
     if (React.isValidElement(element)) {
       // Component classes may have a static create* method.
+      // route类会有createRouteFromReactElement静态方法
       if (element.type.createRouteFromReactElement) {
         const route = element.type.createRouteFromReactElement(element, parentRoute)
 
@@ -68,11 +69,12 @@ export function createRoutesFromReactChildren(children, parentRoute) {
 /**
  * Creates and returns an array of routes from the given object which
  * may be a JSX route, a plain object route, or an array of either.
+ * 根据routes生成routes对象
  */
 export function createRoutes(routes) {
-  if (isReactChildren(routes)) {
+  if (isReactChildren(routes)) { // 用的router组件生成的虚拟DOM
     routes = createRoutesFromReactChildren(routes)
-  } else if (routes && !Array.isArray(routes)) {
+  } else if (routes && !Array.isArray(routes)) { // 开发者配置的就是路由对象
     routes = [ routes ]
   }
 

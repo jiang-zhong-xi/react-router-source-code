@@ -33,6 +33,7 @@ export default function createTransitionManager(history, routes) {
       // Continue from where we left off.
       finishMatch(partialNextState, callback)
     } else {
+      debugger
       matchRoutes(routes, location, function (error, nextState) {
         if (error) {
           callback(error)
@@ -211,6 +212,7 @@ export default function createTransitionManager(history, routes) {
    */
   function listen(listener) {
     function historyListener(location) {
+      console.log("location", location)
       if (state.location === location) {
         listener(null, state)
       } else {

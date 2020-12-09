@@ -1,3 +1,7 @@
+/*
+  创建路由对象，包括history所有属性、过度管理器的部分属性、router的所有状态
+
+*/
 export function createRouterObject(history, transitionManager, state) {
   const router = {
     ...history,

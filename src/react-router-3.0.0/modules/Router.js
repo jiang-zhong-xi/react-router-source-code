@@ -19,13 +19,13 @@ console.log("func", func)
 const Router = React.createClass({
 
   propTypes: {
-    history: object,
-    children: routes,
-    routes, // alias for children
-    render: func,
-    createElement: func,
-    onError: func,
-    onUpdate: func,
+    history: object, // 路由模式
+    children: routes, // 子路由
+    routes, // alias for children 子路由
+    render: func, // 根据router对象创建当前组件树
+    createElement: func, // 当前页面对应的组件都会以参数形式传入此函数，可以用来做props拦截
+    onError: func, // 路由获取 错误时调用
+    onUpdate: func, // 路由 更新时调用
 
     // PRIVATE: For client-side rehydration of server match.
     matchContext: object
@@ -90,9 +90,10 @@ const Router = React.createClass({
   },
 
   componentWillMount() {
-    this.transitionManager = this.createTransitionManager()
-    this.router = this.createRouterObject(this.state)
     debugger
+    this.transitionManager = this.createTransitionManager() // 监听变化-组件更新的核心逻辑
+    this.router = this.createRouterObject(this.state)
+    // 监听路由变化，更新完后调用回调函数
     this._unlisten = this.transitionManager.listen((error, state) => {
       if (error) {
         this.handleError(error)

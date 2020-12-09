@@ -7,9 +7,16 @@ function escapeRegExp(string) {
 function _compilePattern(pattern) {
   let regexpSource = ''
   const paramNames = []
-  const tokens = []
-
+  const tokens = [] // 匹配到子串全部存储到tokens中
+  /*
+    路由路径的几种配置方法
+    :paramName – matches a URL segment up to the next /, ?, or #. The matched string is called a param
+    () – Wraps a portion of the URL that is optional. You may escape parentheses if you want to use them in a url using a backslash \
+    * – Matches all characters (non-greedy) up to the next character in the pattern, or to the end of the URL if there is none, and creates a splat param
+    ** - Matches all characters (greedy) until the next /, ?, or # and creates a splat param
+  */
   let match, lastIndex = 0, matcher = /:([a-zA-Z_$][a-zA-Z0-9_$]*)|\*\*|\*|\(|\)/g
+  // matcher的lastIndex属性当正则由全局g时有效，总是记录本次索引到子串的最后一个位置+1
   while ((match = matcher.exec(pattern))) {
     if (match.index !== lastIndex) {
       tokens.push(pattern.slice(lastIndex, match.index))
@@ -83,6 +90,11 @@ export function matchPattern(pattern, pathname) {
   if (pattern.charAt(0) !== '/') {
     pattern = `/${pattern}`
   }
+  /*
+    regexpSource 确定能匹配到路由路径的正则
+    paramNames 路由路径中的参数名称
+
+  */
   let { regexpSource, paramNames, tokens } = compilePattern(pattern)
 
   if (pattern.charAt(pattern.length - 1) !== '/') {
@@ -90,6 +102,7 @@ export function matchPattern(pattern, pathname) {
   }
 
   // Special-case patterns like '*' for catch-all routes.
+  // 用$替代特殊字符*
   if (tokens[tokens.length - 1] === '*') {
     regexpSource += '$'
   }
@@ -99,8 +112,8 @@ export function matchPattern(pattern, pathname) {
     return null
   }
 
-  const matchedPath = match[0]
-  let remainingPathname = pathname.substr(matchedPath.length)
+  const matchedPath = match[0] // 路由路径和当前地址匹配到的子串
+  let remainingPathname = pathname.substr(matchedPath.length) // 去除匹配子串后的路径
 
   if (remainingPathname) {
     // Require that the match ends at a path separator, if we didn't match

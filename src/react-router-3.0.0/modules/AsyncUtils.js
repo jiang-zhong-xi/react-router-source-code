@@ -14,10 +14,10 @@ export function loopAsync(turns, work, callback) {
   }
 
   function next() {
-    if (isDone) {
+    if (isDone) { // 完成
       return
     }
-
+    // 没有完成
     hasNext = true
     if (sync) {
       // Iterate instead of recursing if possible.
@@ -28,7 +28,7 @@ export function loopAsync(turns, work, callback) {
 
     while (!isDone && currentTurn < turns && hasNext) {
       hasNext = false
-      work.call(this, currentTurn++, next, done)
+      work.call(this, currentTurn++, next, done) // 执行当前work，并在把触发下一轮的函数传给work
     }
 
     sync = false
