@@ -8,6 +8,7 @@ module.exports = {
   resolve: {
     alias: {
         'react-router': path.resolve(rootDir, 'src/react-router-3.0.0'),
+        'history/lib': path.resolve(rootDir, 'src/history/modules'),
     }
   },
   output: {

@@ -46,7 +46,7 @@ const RouterContext = React.createClass({
   createElement(component, props) {
     return component == null ? null : this.props.createElement(component, props)
   },
-
+  // 把components迭代为react组件树
   render() {
     debugger
     const { location, routes, params, components, router } = this.props

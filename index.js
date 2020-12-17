@@ -10,6 +10,9 @@ function createElement(args) {
   console.log("args", args)
  return <RouterContext {...args} />
 }
+function All() {
+  return <div>兜底组件</div>
+}
 render((
   <Router history={browserHistory} render={createElement}>
     <Route path="/" component={App}>
@@ -18,7 +21,8 @@ render((
         <Route path="/repos/:userName/:repoName" component={Repo}/>
       </Route>
       <Route path="/about" component={About}>
-      <Route path="/about" component={About} />
+      </Route>
+      <Route path="*" component={All}>
       </Route>
     </Route>
   </Router>

@@ -90,7 +90,6 @@ const Router = React.createClass({
   },
 
   componentWillMount() {
-    debugger
     this.transitionManager = this.createTransitionManager() // 监听变化-组件更新的核心逻辑
     this.router = this.createRouterObject(this.state)
     // 监听路由变化，更新完后调用回调函数

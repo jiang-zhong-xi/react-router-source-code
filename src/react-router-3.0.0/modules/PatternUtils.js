@@ -1,6 +1,7 @@
 import invariant from 'invariant'
 
 function escapeRegExp(string) {
+  // 如果string中有.*+?^${}()|[]\，那么就在前面加个\转义为普通字符
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
@@ -10,31 +11,34 @@ function _compilePattern(pattern) {
   const tokens = [] // 匹配到子串全部存储到tokens中
   /*
     路由路径的几种配置方法
-    :paramName – matches a URL segment up to the next /, ?, or #. The matched string is called a param
-    () – Wraps a portion of the URL that is optional. You may escape parentheses if you want to use them in a url using a backslash \
-    * – Matches all characters (non-greedy) up to the next character in the pattern, or to the end of the URL if there is none, and creates a splat param
-    ** - Matches all characters (greedy) until the next /, ?, or # and creates a splat param
+    :paramName – 参数名称用/, ?, or #间隔多个参数
+    () – 可选参数或者路径 Wraps a portion of the URL that is optional. You may escape parentheses if you want to use them in a url using a backslash \
+    * – 非贪婪模式匹配 Matches all characters (non-greedy) up to the next character in the pattern, or to the end of the URL if there is none, and creates a splat param
+    ** - 贪婪模式匹配 Matches all characters (greedy) until the next /, ?, or # and creates a splat param
   */
   let match, lastIndex = 0, matcher = /:([a-zA-Z_$][a-zA-Z0-9_$]*)|\*\*|\*|\(|\)/g
-  // matcher的lastIndex属性当正则由全局g时有效，总是记录本次索引到子串的最后一个位置+1
+  // matcher的lastIndex属性当正则由全局g时有效，总是记录本次索引到子串的最后一个位置+1，这里总是表示上次索引的最后一个
   while ((match = matcher.exec(pattern))) {
     if (match.index !== lastIndex) {
+      // 把pattern分段后存储到tokens中
       tokens.push(pattern.slice(lastIndex, match.index))
+      console.log("tokens", tokens)
+      // escapeRegExp 特殊字符串中的某些字符加\后可当作元字符去做正则匹配
       regexpSource += escapeRegExp(pattern.slice(lastIndex, match.index))
     }
 
-    if (match[1]) {
+    if (match[1]) { // 匹配路由路径的参数部分
       regexpSource += '([^/]+)'
       paramNames.push(match[1])
-    } else if (match[0] === '**') {
+    } else if (match[0] === '**') { // 贪婪模式匹配所有字符
       regexpSource += '(.*)'
       paramNames.push('splat')
-    } else if (match[0] === '*') {
+    } else if (match[0] === '*') { // 非贪婪模式匹配所有字符
       regexpSource += '(.*?)'
       paramNames.push('splat')
-    } else if (match[0] === '(') {
+    } else if (match[0] === '(') { // 可选
       regexpSource += '(?:'
-    } else if (match[0] === ')') {
+    } else if (match[0] === ')') { // 可选
       regexpSource += ')?'
     }
 
@@ -102,13 +106,13 @@ export function matchPattern(pattern, pathname) {
   }
 
   // Special-case patterns like '*' for catch-all routes.
-  // 用$替代特殊字符*
+  // 用$（结束字符）替代特殊字符*
   if (tokens[tokens.length - 1] === '*') {
     regexpSource += '$'
   }
 
   const match = pathname.match(new RegExp(`^${regexpSource}`, 'i'))
-  if (match == null) {
+  if (match == null) { // 匹配失败
     return null
   }
 
